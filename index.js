@@ -22,7 +22,7 @@ app.post("/api/register", async (c) => {
       .returning({ id: users.id, username: users.username });
     return c.json({ success: true, data: newUser[0] }, 200);
   } catch (error) {
-    return c.json({ success: false, messege: "register gagal" }, 400);
+    return c.json({ success: false, message : "register gagal" }, 400);
   }
 });
 
@@ -33,14 +33,14 @@ app.post("/api/login", async (c) => {
   });
 
   if (!user)
-    return c.json({ success: false, massage: "username atau password salah" });
+    return c.json({ success: false, message: "username atau password salah" });
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
-  const token = jwt.sign({ id: user.id, password: user.password }, SECRET, {
+  const token = jwt.sign({ id: user.id, username: user.username }, SECRET, {
     expiresIn: "1d",
   });
   setCookie(c, "token", token, {
-    httpOnly: true,
+    httpOnly: false,
     sameSite: "Lax",
     maxAge: 86400,
   });
@@ -55,11 +55,11 @@ app.post("/api/logout", (c) => {
 
 app.get("/api/me", (c) => {
   const token = getCookie(c, "token");
-  if (!token) return c.json({ success: false, message: "Unauthirized" }, 401);
+  if (!token) return c.json({ success: false, message: "Unauthorized" }, 401);
 
   try {
     const user = jwt.verify(token, SECRET);
-    return c.json({ success: true, message: user });
+    return c.json({ success: true, data: user });
   } catch (error) {
     return c.json({ success: false, message: "token tidak valid" }, 404);
   }
@@ -67,7 +67,7 @@ app.get("/api/me", (c) => {
 
 const authMiddleware = async (c, next) => {
   const token = getCookie(c, "token");
-  if (!token) return c.json({ success: false, message: "unathorized" });
+  if (!token) return c.json({ success: false, message: "Unauthorized" });
   try {
     const user = jwt.verify(token, SECRET);
     c.set("user", user);
@@ -77,10 +77,10 @@ const authMiddleware = async (c, next) => {
   }
 };
 
-app.post("/api/transaction", authMiddleware, async (c) => {
+app.post("/api/transactions", authMiddleware, async (c) => {
   try {
     const user = c.get("user");
-    const { nominal, transactionDate, status, description } =
+    const { nominal, transactionsDate, status, description } =
       await c.req.json();
 
     const newTransaction = await db
@@ -88,7 +88,7 @@ app.post("/api/transaction", authMiddleware, async (c) => {
       .values({
         userId: user.id,
         nominal: Number(nominal),
-        transactionDate: new Date(transactionDate),
+        transactionDate: new Date(transactionsDate),
         status: status,
         description: description,
       })
@@ -97,11 +97,7 @@ app.post("/api/transaction", authMiddleware, async (c) => {
     return c.json(
       {
         success: true,
-        data: user,
-        nominal,
-        transactionDate,
-        status,
-        description,
+        data: newTransaction[0]
       },
       201
     );

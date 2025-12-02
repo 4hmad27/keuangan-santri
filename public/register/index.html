@@ -33,15 +33,15 @@
             method: "POST",
             headers: { 'Content-Type': "application/json" },
             body: JSON.stringify({ username, password }),
-          }).then((res => res.json()));
+          });
 
-          // const result = await response.json();
+          const result = await response.json();
 
-          console.log(response)
+          console.log(result)
 
-          if(response.success === true){
+          if(result.success === true){
             messageDiv.style.color = 'green';
-            messageDiv.innerHTML = 'Registrasi **berhasil** silahkan <a href="/login/">login</a>.';
+            messageDiv.innerHTML = 'Registrasi berhasil** silahkan <a href="/login/">login</a>.';
             form.reset();
           }else{
             messageDiv.textContent = result.message || 'Registrasi Gagal';
