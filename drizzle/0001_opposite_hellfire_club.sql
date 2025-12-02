@@ -1,0 +1,1 @@
+ALTER TABLE "transactions" ALTER COLUMN "transaction_date" SET DEFAULT now();
