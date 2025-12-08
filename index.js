@@ -158,27 +158,27 @@ app.get("/api/transactions", authMiddleware, async (c) => {
   }
 });
 
-// app.use("/*", serveStatic({ root: "./public" }));
+app.use("/*", serveStatic({ root: "./public" }));
 
-app.get('/favicon.ico', (c) => {
-  return c.text('No favicon', 404);
-  // atau return favicon jika ada
-});
+// app.get('/favicon.ico', (c) => {
+//   return c.text('No favicon', 404);
+//   // atau return favicon jika ada
+// });
 
-// API Routes Anda
-app.get('/', (c) => c.text('Hello World'));
-app.get('/api/*', (c) => c.json({ status: 'ok' }));
+// // API Routes Anda
+// app.get('/', (c) => c.text('Hello World'));
+// app.get('/api/*', (c) => c.json({ status: 'ok' }));
 
 
-if (process.env.VERCEL) {
-  globalThis.app = app;
-} else {
-  const port = 8000;
-  console.log(`🚀 Server is running on http://localhost:${port}`);
-  serve({ fetch: app.fetch, port });
-}
-// const port = 8000;
-// console.log(`server is running on http://localhost:${port}`);
-// serve({ fetch: app.fetch, port });
+// if (process.env.VERCEL) {
+//   globalThis.app = app;
+// } else {
+//   const port = 8000;
+//   console.log(`🚀 Server is running on http://localhost:${port}`);
+//   serve({ fetch: app.fetch, port });
+// }
+const port = 8000;
+console.log(`server is running on http://localhost:${port}`);
+serve({ fetch: app.fetch, port });
 
 export default app;
