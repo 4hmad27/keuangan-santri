@@ -51,6 +51,22 @@
       </form>
 
       <h2>Riwayat Transaksi</h2>
+      <form action="" id="riwayatForm">
+        <label for="riwayatSelect">Tampilkan:</label>
+        <select
+          name="riwayatSelect"
+          id="riwayatSelect"
+          onchange="
+            riwayat = this.value;
+            fetchTransactions(CURRENT_YEAR, CURRENT_MONTH);
+          "
+        >
+          <option value="0">Bulan Ini</option>
+          <option value="1">1 Bulan Lalu</option>
+          <option value="3">3 Bulan Lalu</option>
+        </select>
+        <!-- <button type="submit">Tampilkan Riwayat</button> -->
+      </form>
       <ul id="transactionList">
         <li>Memuat Data...</li>
       </ul>
@@ -65,10 +81,14 @@
       const addTransactionForm = document.getElementById("addTransactionForm");
       const transactionList = document.getElementById("transactionList");
       const addMessageDiv = document.getElementById("addMessage");
+      const riwayatForm = document.getElementById("riwayatForm");
+      let riwayat = document.getElementById("riwayatSelect").value; // 0: bulan ini, 1: semua riwayat
+      console.log("riwayat awal", riwayat);
 
       const TODAY = new Date();
       const CURRENT_YEAR = TODAY.getFullYear();
       const CURRENT_MONTH = (TODAY.getMonth() + 1).toString().padStart(2, "0");
+      let bulanRiwayat = [];
 
       const formatRupiah = (number) => {
         return new Intl.NumberFormat("id-ID", {
@@ -104,14 +124,31 @@
         }
       };
 
+      // riwayatForm.addEventListener("submit", (e) => {
+      //   e.preventDefault();
+      //   riwayat = document.getElementById("riwayatSelect").value;
+      //   console.log("riwayat dipilih", riwayat);
+      //   // fetchTransactions(CURRENT_YEAR, CURRENT_MONTH);
+      // });
+
       const fetchTransactions = async (year, month) => {
         currentMonthYearEl.textContent = `${month}-${year}`;
         transactionList.innerHTML = "<li>Memuat Data...</li>";
 
         try {
+          // console.log("fetchTransactions dengan riwayat:", riwayat);
+          if (riwayat == 1) {
+            month = parseInt(month, 10) - 1;
+            if (month <= 0) {
+              month += 12;
+              year -= 1;
+            }
+          }
+
           const response = await fetch(
             `/api/transactions?year=${year}&month=${month}`
           );
+
           if (!response.ok) {
             transactionList.innerHTML = "<li>Gagal Memuat Transaksi.</li>";
             return;
@@ -148,6 +185,11 @@
           } else {
             transactionList.innerHTML = "<li>Gagal Memuat Transaksi.</li>";
           }
+          // } else {
+          //   console.error("gagal fetchTransactions", error);
+          //   transactionList.innerHTML =
+          //     "<li>error jaringan saat memuat data</li>";
+          // }
         } catch (error) {
           console.error("gagal fetchTransactions", error);
           transactionList.innerHTML =
