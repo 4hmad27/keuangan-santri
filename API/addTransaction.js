@@ -1,11 +1,7 @@
 import { transactions } from "../db/schema.js";
 import { db } from "../db/index.js";
-// import {authMiddleware} from ".auth.js"
-// import { authMiddleware } from "./auth.js";
-// const authMiddleware = authMiddleware;
 
-export function addTransaction(app, authMiddleware){
-    app.post("/api/transactions", authMiddleware, async (c) => {
+const addTransaction = async (c) => {
       try {
         const user = c.get("user");
         const { nominal, transactionsDate, status, description } =
@@ -33,5 +29,6 @@ export function addTransaction(app, authMiddleware){
         console.error(error);
         return c.json({ success: false, message: "gagal total" }, 404);
       }
-    });
-}
+    }
+
+export default addTransaction;

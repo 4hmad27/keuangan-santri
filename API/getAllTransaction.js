@@ -1,8 +1,6 @@
 import { db } from "../db/index.js";
 
-export function getAllTransactionRouter(app,authMiddleware){
-    app.get("/api/transactions/all", authMiddleware, async(c) => {
-    
+const getAllTransaction = async (c) => {    
       const user = c.get("user");
       const userTransactions = await db.query.transactions.findMany({
         where: eq(transactions.userId, user.id),
@@ -24,5 +22,6 @@ export function getAllTransactionRouter(app,authMiddleware){
         data: userTransactions,
         summary: { totalIncome, totalOutcome, balance },
       });
-    });
-}
+    }
+
+export default getAllTransaction;

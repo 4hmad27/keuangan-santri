@@ -1,7 +1,6 @@
 import { db } from "../db/index.js"; 
 
-export function getTransactionRouter(app, authMiddleware){
-    app.get("/api/transactions", authMiddleware, async (c) => {
+const getTransaction = async (c) => {
       try {
         const user = c.get("user");
     
@@ -50,5 +49,6 @@ export function getTransactionRouter(app, authMiddleware){
         console.error("error", error);
         return c.json({ success: false, message: error.message }, 500);
       }
-    });
-}
+    }
+
+export default getTransaction;

@@ -12,10 +12,10 @@ import { registerRouter } from "./API/register.js";
 import { loginRouter } from "./API/login.js";
 import { logoutRouter } from "./API/logout.js";
 import { checkAuth } from "./API/index.js";
-import { addTransaction } from "./API/addTransaction.js";
-import { getTransactionRouter } from "./API/getTransaction.js";
-import { getAllTransactionRouter } from "./API/getAllTransaction.js";
 import { authMiddleware } from "./API/auth.js";
+import  addTransaction  from "./API/addTransaction.js";
+import  getTransaction  from "./API/getTransaction.js";
+import  getAllTransaction  from "./API/getAllTransaction.js";
 
 const app = new Hono();
 const SECRET = process.env.JWT_SECRET;
@@ -24,12 +24,10 @@ registerRouter(app);
 loginRouter(app);
 logoutRouter(app);
 checkAuth(app);
-
-app.use("/api/transactions/*", authMiddleware);
-
-addTransaction(app);
-getTransactionRouter(app);
-getAllTransactionRouter(app);
+// app.use("/api/transactions/*", authMiddleware);
+app.post("/api/transactions", authMiddleware, addTransaction)
+app.get("/api/transactions", authMiddleware, getTransaction)
+app.get("/api/trasactions/all", authMiddleware, getAllTransaction)
 
 
 app.use("/*", serveStatic({ root: "./public" }));
